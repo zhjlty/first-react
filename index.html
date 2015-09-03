@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="react.js"></script>
+    <script src="JSXTransformer.js"></script>
+    <link href="bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <script type="text/jsx">
+        var TweetBox = React.createClass({
+            getInitialState: function() {
+                return {
+                    text: "",
+                    photoAdded: false
+                };
+            },
+            handleChange: function(event) {
+                console.log(event.target.value);  /*仅仅做console测试用*/
+                this.setState({ text: event.target.value });/*设置一个事件处理器将“状态”中的text设置成文本框内的内容。利用一个叫做setState的内置函数将文本框里的内容传递给text。*/
+            },
+            togglePhoto: function(event) {
+                this.setState({ photoAdded: !this.state.photoAdded });
+            },
+            remainingCharacters: function() {
+                if (this.state.photoAdded) {
+                    return 140 - 23 - this.state.text.length;
+                } else {
+                    return 140 - this.state.text.length;
+                }
+            },
+            overflowAlert: function() {
+                if (this.remainingCharacters() < 0) {
+                    var beforeOverflowText = this.state.text.substring(140 - 10, 140);
+                    var overflowText = this.state.text.substring(140);
+
+                    if (this.state.photoAdded) {
+                        var beforeOverflowText = this.state.text.substring(140 - 23 - 10, 140 - 23);
+                        var overflowText = this.state.text.substring(140 - 23);
+                    } else {
+                        var beforeOverflowText = this.state.text.substring(140 - 10, 140);
+                        var overflowText = this.state.text.substring(140);
+                    }
+                    return (
+                            <div className="alert alert-warning">
+                                <strong>Oops! Too Long:</strong>
+                                &nbsp;...{beforeOverflowText}
+                                <strong className="bg-danger">{overflowText}</strong>
+                            </div>
+                    );
+                } else {
+                    return "";
+                }
+
+            },
+            render: function() {
+                return (
+                        <div className="well clearfix">
+                            { this.overflowAlert() }
+                            <textarea className="form-control" onChange={this.handleChange}></textarea>
+                            <br/>
+                            <span>{ this.remainingCharacters() }</span>
+                            <button className="btn btn-primary pull-right" disabled={this.state.text.length === 0 && !this.state.photoAdded}>Tweet</button>
+                            <button className="btn btn-default pull-right" onClick={this.togglePhoto}>
+                                {this.state.photoAdded ? "✓ Photo Added" : "Add Photo" }
+                            </button>
+                        </div>
+                );
+            }
+        });
+
+        React.render(
+                <TweetBox />,
+                document.body
+        );
+    </script>
+    <meta charset="utf-8">
+    <title>JS Bin</title>
+</head>
+<body>
+
+</body>
+</html>
